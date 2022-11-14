@@ -74,7 +74,7 @@ router.get("/offers", async (req, res) => {
   // Récupérer le nombre total d'annonces .count()
   // Définir les filtres
   //appliquer les filtres à la recherche d'annonces
-  // définir combien de résultat afficher par pages (3)
+  // définir combien de résultat afficher par pages (20)
   try {
     const { title, priceMin, priceMax, sort, page } = req.query; // récupère les données passées en query
     //filtres
@@ -96,7 +96,7 @@ router.get("/offers", async (req, res) => {
       //définir le filtre de prix pour que les query correspondent avec "price-desc" et "price-asc"
       sortFilter.product_price = 1;
     }
-    const currentPage = page * 3 - 3; // la page en query x le nmbre d'offres que j'ai choisi par pages - le mm nombre pour revenir a la position 0
+    const currentPage = page * 20 - 20; // la page en query x le nmbre d'offres que j'ai choisi par pages - le mm nombre pour revenir a la position 0
     //const skip (pageRequired -1 * limit;)
     const count = await Offer.count(); // récupère le nombre d'annonces existantes dans la bdd --> .countDocuments(filters)
     const offers = await Offer.find({
@@ -105,7 +105,7 @@ router.get("/offers", async (req, res) => {
     })
       .sort(sortFilter)
       .skip(currentPage)
-      .limit(3)
+      .limit(20)
       .populate("owner", "account"); // récupère toutes les annonces + applique lles filtres
     res.json({ count: count, offers: offers }); // retourner le "count" + les offres filtrées. tableau objet ou objet
   } catch (error) {
