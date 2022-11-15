@@ -1,6 +1,7 @@
 require("dotenv").config();
 const express = require("express");
 const router = express.Router();
+const stripe = require("stripe")(process.env.STRIPE);
 
 const Offer = require("../models/Offer");
 const User = require("../models/User");
@@ -146,6 +147,21 @@ router.get("/offer/:id", async (req, res) => {
     //retourner le résultat
   } catch (error) {
     res.status(400).json({ error: error.message });
+  }
+});
+
+router.post("/payment", async (req, res) => {
+  try {
+    const { stripeToken, title, amount } = req.body;
+    const response = await stripe.charges.create({
+      amount: amount * 100,
+      currency: "eur",
+      description: title,
+      source: stripeToken,
+    });
+    res.json({ status: response.status });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
   }
 });
 
